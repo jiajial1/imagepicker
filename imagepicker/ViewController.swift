@@ -127,12 +127,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let meme = generateMemedImage()
 
         let activityViewController = UIActivityViewController(activityItems: [meme], applicationActivities:  nil)
-//        activityViewController.completionWithItemsHandler = {
-//                        _, completed, _, _ in
-//                        if completed {
-//                            //save
-//                        }
-//                    }
+        activityViewController.completionWithItemsHandler = { activity, success, items, error in
+                    if success {
+                        Meme(topText: self.topTextField.text! as String?, bottomeText: self.bottomTextField.text! as String?, originalImage: self.imagePicker, memeImage: meme)
+                        // not sure what to do with the Meme object. it's not mentioned in th spec'
+                    }
+                }
         activityViewController.excludedActivityTypes = [.addToReadingList,
                                                         .airDrop,
                                                         .assignToContact,
@@ -178,6 +178,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: false, completion: nil)
+    }
+    
+    struct Meme {
+        var topText: String?
+        var bottomeText: String?
+        var originalImage: UIImageView
+        var memeImage: UIImage
     }
 }
 
