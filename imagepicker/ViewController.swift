@@ -24,14 +24,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSAttributedString.Key.strokeColor: UIColor.white,
         NSAttributedString.Key.foregroundColor: UIColor.black,
         NSAttributedString.Key.font: UIFont(name: "IMPACT", size: 40)!,
-        NSAttributedString.Key.strokeWidth: 5
+        NSAttributedString.Key.strokeWidth: -5
     ]
     
     override func viewWillAppear(_ animated: Bool) {
-        // disable cameraButton if camera is no accessible
-        cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
+        // disable cameraButton if app runs in Simulator
+        #if targetEnvironment(simulator)
+            cameraButton.isEnabled = false
+        #else
+            cameraButton.isEnabled = true
+        #endif
         
-        // disable share button if image has been selected
+        // disable share button if image has not been selected
         uploadButton.isEnabled = ( imagePicker.image != nil )
         
         super.viewWillAppear(false)
@@ -58,7 +62,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
-        view.frame.origin.y -= getKeyboardHeight(notification)
+        if bottomTextField.isFirstResponder {
+            view.frame.origin.y -= getKeyboardHeight(notification)
+        }
     }
 
     func subscribeToKeyboardHideNotifications() {
@@ -80,11 +86,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     override func viewDidLoad() {
-        setupTextField(self.topTextField, placeHolderText: "TOP")
-        setupTextField(self.bottomTextField, placeHolderText: "BOTTOM")
-
-        self.topTextField.delegate = memeDelegate
-        self.bottomTextField.delegate = memeDelegate
+        setupTextField(topTextField, placeHolderText: "TOP")
+        setupTextField(bottomTextField, placeHolderText: "BOTTOM")
         
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -95,6 +98,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         textField.textAlignment = .center
         textField.defaultTextAttributes = memeTextAttributes
         textField.attributedPlaceholder = NSAttributedString(string: placeHolderText, attributes: memeTextAttributes)
+        textField.delegate = memeDelegate
     }
     
     // MARK: Actions
@@ -104,25 +108,31 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         bottomTextField.text = "BOTTOM"
     }
     
-    @IBAction func pickAnyImage(_ sender: Any) {
+    func pickImage(source: UIImagePickerController.SourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
+        imagePicker.sourceType = source
         present(imagePicker, animated: true, completion: nil)
     }
     
+    @IBAction func pickAnyImage(_ sender: Any) {
+        pickImage(source: .photoLibrary)
+    }
+    
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        UIImagePickerController.isSourceTypeAvailable(.camera)
-        present(imagePicker, animated: true, completion: nil)
+        pickImage(source: .camera)
     }
     
     @IBAction func share(_ sender: Any) {
         let meme = generateMemedImage()
 
         let activityViewController = UIActivityViewController(activityItems: [meme], applicationActivities:  nil)
+//        activityViewController.completionWithItemsHandler = {
+//                        _, completed, _, _ in
+//                        if completed {
+//                            //save
+//                        }
+//                    }
         activityViewController.excludedActivityTypes = [.addToReadingList,
                                                         .airDrop,
                                                         .assignToContact,
