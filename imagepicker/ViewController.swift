@@ -21,8 +21,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // define text attributes
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
-        NSAttributedString.Key.strokeColor: UIColor.white,
-        NSAttributedString.Key.foregroundColor: UIColor.black,
+        NSAttributedString.Key.strokeColor: UIColor.black,
+        NSAttributedString.Key.foregroundColor: UIColor.white,
         NSAttributedString.Key.font: UIFont(name: "IMPACT", size: 40)!,
         NSAttributedString.Key.strokeWidth: -5
     ]
@@ -97,6 +97,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func setupTextField(_ textField: UITextField, placeHolderText: String) {
         textField.textAlignment = .center
         textField.defaultTextAttributes = memeTextAttributes
+        textField.adjustsFontSizeToFitWidth = true
         textField.attributedPlaceholder = NSAttributedString(string: placeHolderText, attributes: memeTextAttributes)
         textField.delegate = memeDelegate
     }
