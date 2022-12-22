@@ -179,12 +179,5 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: false, completion: nil)
     }
-    
-    struct Meme {
-        var topText: String?
-        var bottomeText: String?
-        var originalImage: UIImageView
-        var memeImage: UIImage
-    }
 }
 
