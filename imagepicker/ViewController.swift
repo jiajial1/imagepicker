@@ -16,6 +16,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var uploadButton: UIButton!
     @IBOutlet weak var toolbar: UIToolbar!
 
+    var memedImage: UIImage!
+    
     let memeDelegate = MemeTextFieldDelegate()
     
     // define text attributes
@@ -126,13 +128,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func share(_ sender: Any) {
-        let meme = generateMemedImage()
+        let memedImage = generateMemedImage()
 
-        let activityViewController = UIActivityViewController(activityItems: [meme], applicationActivities:  nil)
+        let activityViewController = UIActivityViewController(activityItems: [memedImage], applicationActivities:  nil)
         activityViewController.completionWithItemsHandler = { activity, success, items, error in
                     if success {
-                        Meme(topText: self.topTextField.text! as String?, bottomeText: self.bottomTextField.text! as String?, originalImage: self.imagePicker, memeImage: meme)
-                        // not sure what to do with the Meme object. it's not mentioned in th spec'
+                        self.save()
                     }
                 }
         activityViewController.excludedActivityTypes = [.addToReadingList,
@@ -167,6 +168,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         toolbar.isHidden = false
         return memedImage
     }
+
+    func save() {
+        // Create the meme
+        let meme = Meme(topText: topTextField.text!, bottomeText: bottomTextField.text!, originalImage: imagePicker.image, memeImage: memedImage)
+
+        // Add it to the memes array in the Application Delegate
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+        appDelegate.memes.append(meme)
+    }
+
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {

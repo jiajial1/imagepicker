@@ -11,6 +11,6 @@ import UIKit
 struct Meme {
     var topText: String?
     var bottomeText: String?
-    var originalImage: UIImageView
+    var originalImage: UIImage?
     var memeImage: UIImage
 }
