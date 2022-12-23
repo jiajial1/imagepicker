@@ -14,7 +14,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var bottomTextField: UITextField!
     @IBOutlet weak var uploadButton: UIButton!
-    @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var toolbar: UIToolbar!
 
     let memeDelegate = MemeTextFieldDelegate()
@@ -104,8 +103,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // MARK: Actions
     @IBAction func cleanImagePicker(_ sender: Any) {
         imagePicker.image = nil
-        topTextField.text = "TOP"
-        bottomTextField.text = "BOTTOM"
+        topTextField.text = ""
+        topTextField.placeholder = "TOP"
+        bottomTextField.text = ""
+        bottomTextField.placeholder = "BOTTOM"
+        uploadButton.isEnabled = false
     }
     
     func pickImage(source: UIImagePickerController.SourceType) {
@@ -152,7 +154,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func generateMemedImage() -> UIImage {
-        navBar.isHidden = true
+//        navBar.isHidden = true
         toolbar.isHidden = true
 
         // Render view to an image
@@ -161,7 +163,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
 
-        navBar.isHidden = false
+//        navBar.isHidden = false
         toolbar.isHidden = false
         return memedImage
     }
